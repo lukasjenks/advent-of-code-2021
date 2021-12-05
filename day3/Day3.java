@@ -1,6 +1,4 @@
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.Collections;
 import java.io.*;
 import java.nio.file.*;
 
@@ -8,8 +6,8 @@ public class Day3 {
 	public static void main(String[] args) {
 		ArrayList<String> binaryNums = getPuzzleInput("./day3puzzleinput.txt");
 		assert binaryNums != null;
-		String[] bitRules = getSolutionOne(binaryNums);
-		getSolutionTwo(binaryNums, bitRules);
+		getSolutionOne(binaryNums);
+		getSolutionTwo(binaryNums);
 	}
 
 	private static ArrayList<String> getPuzzleInput(String fileName) {
@@ -22,7 +20,7 @@ public class Day3 {
 		return null;
 	}
 
-	private static String[] getSolutionOne(ArrayList<String> binaryNums) {
+	private static void getSolutionOne(ArrayList<String> binaryNums) {
 		String gammaRate = "";
 		String epsilonRate = "";
 		// For column in 2D array
@@ -34,7 +32,7 @@ public class Day3 {
 				}
 			}
 			int numberOfZeroes = binaryNums.size() - numberOfOnes;
-			if (numberOfOnes >= numberOfZeroes) {
+			if (numberOfOnes > numberOfZeroes) {
 				gammaRate = gammaRate + "1";
 				epsilonRate = epsilonRate + "0";
 			} else {
@@ -44,41 +42,64 @@ public class Day3 {
 		}
 		// output product of gammaRate converted to decimal and epsilonRate converted to decimal
 		System.out.println(Integer.parseInt(gammaRate, 2) * Integer.parseInt(epsilonRate, 2));
-		return(new String[]{gammaRate, epsilonRate});
 	}
 
-	private static void getSolutionTwo(ArrayList<String> binaryNums, String[] bitRules) {
-		ArrayList<String> oxygenGeneratorRatingValues = new ArrayList<String>(binaryNums);
-		ArrayList<String> co2ScrubberRatingValues = new ArrayList<String>(binaryNums);
-		String oxygenGeneratorBitRules = bitRules[0];
-		String co2ScrubberBitRules = bitRules[1];
+	private static void getSolutionTwo(ArrayList<String> binaryNums) {
+		ArrayList<String> oxygenGeneratorRatingValues = new ArrayList<>(binaryNums);
+		ArrayList<String> co2ScrubberRatingValues = new ArrayList<>(binaryNums);
+		String[] bitRules = getBitRules(binaryNums);
+		String oxygenGeneratorBitRule = bitRules[0];
+		String co2ScrubberBitRule = bitRules[1];
 
 		// For each bit between 0 and 11, apply bitRule to remove values from values array until only 1 value remains,
 		// which will be the rating value.
-		String oxygenGeneratorRating = getRating(oxygenGeneratorRatingValues, oxygenGeneratorBitRules);
-		String co2GeneratorRating = getRating(co2ScrubberRatingValues, co2ScrubberBitRules);
+		String oxygenGeneratorRating = getRating(oxygenGeneratorRatingValues, oxygenGeneratorBitRule);
+		String co2GeneratorRating = getRating(co2ScrubberRatingValues, co2ScrubberBitRule);
+		assert oxygenGeneratorRating != null;
+		assert co2GeneratorRating != null;
 		System.out.println(Integer.parseInt(oxygenGeneratorRating, 2) * Integer.parseInt(co2GeneratorRating, 2));
 	}
 
+	// Based on getSolutionOne
+	private static String[] getBitRules(ArrayList<String> binaryNums) {
+		String oxygenBitRule = "";
+		String co2BitRule = "";
+		for (int i=0; i<binaryNums.get(0).length(); i++) {
+			int numberOfOnes = 0;
+			for (int j = 0; j < binaryNums.size(); j++) {
+				if (binaryNums.get(j).charAt(i) == '1') {
+					numberOfOnes++;
+				}
+			}
+			int numberOfZeroes = binaryNums.size() - numberOfOnes;
+			if (numberOfOnes > numberOfZeroes) {
+				oxygenBitRule = oxygenBitRule + "1";
+				co2BitRule = co2BitRule + "0";
+			} else if (numberOfZeroes > numberOfOnes) {
+				oxygenBitRule = oxygenBitRule + "0";
+				co2BitRule = co2BitRule + "1";
+			} else {
+				oxygenBitRule = oxygenBitRule + "1";
+				co2BitRule = co2BitRule + "0";
+			}
+		}
+		return (new String[]{oxygenBitRule, co2BitRule});
+	}
+
 	private static String getRating(ArrayList<String> valuesToFilter, String bitRule) {
-		System.out.println("Bitrule is: " + bitRule);
-		//System.out.println(bitRule);
-		for (int bit=0; bit < valuesToFilter.get(0).length(); bit++) {
-			for (int arrIndex = 0; arrIndex < valuesToFilter.size(); arrIndex++) {
-				//System.out.println(bitRule.charAt(bit) + " vs: " + valuesToFilter.get(arrIndex).charAt(bit));
+		for (int bit=0; bit < 12; bit++) {
+			int arrIndex = 0;
+			while (arrIndex < valuesToFilter.size()) {
 				if (bitRule.charAt(bit) != valuesToFilter.get(arrIndex).charAt(bit)) {
-					//System.out.println("Removed.");
 					valuesToFilter.remove(arrIndex);
 					if (valuesToFilter.size() == 1) {
 						return valuesToFilter.get(0);
 					}
 				} else {
-					//System.out.println("Didn't remove.");
+					arrIndex++;
 				}
 			}
 		}
-		System.out.println("Didn't filter down to only one value. values left are: ");
-		System.out.println(valuesToFilter);
-		return valuesToFilter.get(0);
+		return null;
 	}
 }
