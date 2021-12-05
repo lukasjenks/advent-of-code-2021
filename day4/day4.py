@@ -34,10 +34,6 @@ def getSolutionOne(puzzleInput):
         for board in boards:
             makeMove(board, move)
             if checkIfWinner(board):
-                #for i in range(0, len(board)):
-                    #print(board[i])
-                #print("\n")
-                #print(move)
                 print("Part One Solution Is:  " + str(evaluateBoard(board, move)))
                 return
 
@@ -62,7 +58,8 @@ def getSolutionTwo(puzzleInput):
             makeMove(board, move)
             if checkIfWinner(board) and wonBoards.get(boards.index(board)) == None:
                 wonBoards[boards.index(board)] = True
-                print("Part Two Solution Is:  " + str(evaluateBoard(board, move)))
+                solution = str(evaluateBoard(board, move))
+    print("Part Two Solution Is:  " + solution)
 
 # Takes all the 2D arrays representing the bingo sheets and the move to apply to each sheet
 def makeMove(bingoSheet, move):
@@ -73,8 +70,9 @@ def makeMove(bingoSheet, move):
                 return True
     return False
 
+# Takes a 2D array representing a bingo sheet and returns True if the sheet is a winner, False otherwise
 def checkIfWinner(bingoSheet):
-    # Any row, column, or diagonal with all -1's is a winner
+    # Any row or column with all -1's is a winner
 
     # Check rows
     for i in range (0, len(bingoSheet)):
@@ -88,24 +86,10 @@ def checkIfWinner(bingoSheet):
             column.append(bingoSheet[j][i])
         if column.count("-1") == len(column):
             return True
-
-    # Check diagonals
-    # Top left to bottom right
-    #diagonal = []
-    #for i in range (0, len(bingoSheet)):
-    #    diagonal.append(bingoSheet[i][i])
-    #if diagonal.count("-1") == len(diagonal):
-    #    return True
-
-    # Top right to bottom left
-    #diagonal = []
-    #for i in range (0, len(bingoSheet)):
-    #    diagonal.append(bingoSheet[i][len(bingoSheet) - 1 - i])
-    #if diagonal.count("-1") == len(diagonal):
-    #    return True
-
     return False
 
+# Takes a 2D array representing a bingo sheet and the move that was last made on said sheet, and returns the
+# product of the sum of unmarked values and the value of the last move made
 def evaluateBoard(bingoSheet, lastMove):
     sum = 0
     for i in range (0, len(bingoSheet)):
@@ -116,7 +100,5 @@ def evaluateBoard(bingoSheet, lastMove):
 
 main()
 
-# 22554 is too high an answer for part 1
-# 1125 is too low for part 2
-# 4589 is too low for part 2
-# 21576 is too high for part 2
+# 4662 is answer for part one
+# 12080 is answer for part two
