@@ -20,35 +20,32 @@ struct Fish getPuzzleInput(char* fileName) {
     fscanf(file, "%s", &line[0]);
 
 	int *puzzleInput = (int *)malloc((sizeof(int)) * 2048);
+	if (puzzleInput == NULL) {
+	  printf("Error encountered while mallocing for puzzleInput\n");
+	  exit(1);
+	}
+	
     int numOfNums = 0;
 	int puzzleInputInsertIndex = 0;
     for (int i=0; i<strlen(line); i++) {
         if (isdigit(line[i])) {
-            printf("%c", line[i]);
             puzzleInput[puzzleInputInsertIndex] = atoi(&line[i]);
             puzzleInputInsertIndex++;
             numOfNums++;
         }
     }
+	free(line);
 
     puzzleInput = realloc(puzzleInput, numOfNums * sizeof(int));
+	if (puzzleInput == NULL) {
+	  printf("Error encountered while reallocing for puzzleInput\n");
+	  exit(1);
+	}
 
-    printf("\n");
-    for (int i=0; i<numOfNums; i++) {
-        printf("%d ", puzzleInput[i]);
-    }
-	printf("\n");
 	struct Fish Fish;
 	Fish.fish = puzzleInput;
 	Fish.numberOfFish = numOfNums;
     return Fish;
-}
-
-void printFish(struct Fish fish) {
-  for (int i=0; i<fish.numberOfFish; i++) {
-	printf("%d ", fish.fish[i]);
-  }
-  printf("\n");
 }
 
 int getNumberOfFish(struct Fish fish, int numberOfDays) {
@@ -58,6 +55,10 @@ int getNumberOfFish(struct Fish fish, int numberOfDays) {
 		case 0:
 		  fish.fish[j] = 6;
 		  fish.fish = realloc(fish.fish, (fish.numberOfFish+1) * sizeof(int));
+		  if (fish.fish == NULL) {
+			printf("Error encountered while reallocing for fish.fish\n");
+			exit(1);
+		  }
 		  fish.fish[fish.numberOfFish] = 9; //9 instead of 8 because it will get decremented
 		  fish.numberOfFish++;
 		  break;
@@ -66,7 +67,6 @@ int getNumberOfFish(struct Fish fish, int numberOfDays) {
 		  break;
 		}
 	  }
-	  printFish(fish);
 	}
     return fish.numberOfFish;
 }
@@ -74,6 +74,8 @@ int getNumberOfFish(struct Fish fish, int numberOfDays) {
 
 int main() {
     struct Fish fish = getPuzzleInput("day6PuzzleInput.txt");
-	int numOfFish = getNumberOfFish(fish, 80);
-	printf("Part One Solution: %d\n", numOfFish);
+	int numOfFish = getNumberOfFish(fish, 256);
+	// 256 - 80 = 176, prior call to getNumberOfFish changes fish.fish array.
+	printf("Part One Solution: %d\nPart Two Solution: %d\n", getNumberOfFish(fish, 80), getNumberOfFish(fish, 176));
+	free(fish.fish);
 }
