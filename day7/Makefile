@@ -3,11 +3,11 @@ CFLAGS=-g
 
 all:	day7
 
-day6:	day6.cpp
+day7:	day7.cpp
 	$(CC) $(CFLAGS) -o $@ $^
 
-test: clean day6
-	./day6
+test: clean day7
+	./day7
 
 clean:
-	rm -f day6
+	rm -f day7
