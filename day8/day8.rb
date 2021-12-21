@@ -7,10 +7,12 @@ def getPuzzleInput(fileName)
 end
 
 def main
-    input = getPuzzleInput("puzzle-input.txt")
+    input = getPuzzleInput("puzzle-example.txt")
     inputParsed = Input.new(input)
     solutionOne = inputParsed.getNumUniqueOutputs()
+    solutionTwo = inputParsed.getSumOfOutputs()
     puts "Solution One: #{solutionOne}"
+    puts "Solution Two: #{solutionTwo}"
 end
 
 main()
