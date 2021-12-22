@@ -2,14 +2,8 @@
 from classes import signals
 from classes import segments
 
-def getSolutionOne():
-    return 0
-
-def getSolutionTwo():
-    return 0
-
 def main():
-    signalObj = signals.Signals("puzzle-example.txt")
+    signalObj = signals.Signals("puzzle-input.txt")
     sum = 0
     for i in range(0, len(signalObj.inputs)):
         segmentsObj = segments.Segments(signalObj.inputs[i], signalObj.outputs[i])
@@ -18,8 +12,5 @@ def main():
     print("Part Two Solution: " + str(sum))
 
 main()
-    
 
-
-    #print("Part One Solution: ", getSolutionOne())
-    #print("Part Two Solution: ", getSolutionTwo())
+# 3570 answer is too low

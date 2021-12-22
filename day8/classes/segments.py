@@ -3,73 +3,139 @@ class Segments:
     def __init__(self, inputs, outputs):
         self.numberToLettersMap = {} # what is needed for the solution
         self.lettersToNumbersMap = {} # what is needed for the solution
-        # self.letterToLetterMap = {}
+        self.letterToLetterMap = {}
         inputsAndOutputs = inputs + outputs
+        foundItems = 0
         for signals in inputsAndOutputs:
-            match(len(signals)):
-                case 2:
+            if (len(signals) == 2):
+                if (not self.numberToLettersMap.get(1)):
+                    foundItems += 1
                     self.numberToLettersMap[1] = signals
-                case 4:
+                    
+            elif (len(signals) == 4):
+                if (not self.numberToLettersMap.get(4)):
+                    foundItems += 1
                     self.numberToLettersMap[4] = signals
-                case 7:
-                    self.numberToLettersMap[3] = signals
-                case 8:
+                    
+            elif (len(signals) == 3):
+                if (not self.numberToLettersMap.get(3)):
+                    foundItems += 1
                     self.numberToLettersMap[7] = signals
-        # Algorithm for finding letter that maps to a
-        #for letter in self.numberToLettersMap[7]:
-            #if letter not in self.numberToLettersMap[1]:
-                #self.letterToLetterMap["a"] = letter
-        # 3 is the one with 5 segments and contains all letters in 1
-        for signal in inputsAndOutputs:
-            if len(signal) == 5:
-                numInCommonWith1 = 0
-                for letter in signal:
-                    if self.numberToLettersMap.get(1) and letter in self.numberToLettersMap.get(1):
-                        numInCommonWith1 += 1
-                if (numInCommonWith1 == 2):
-                    self.numberToLettersMap[3] = signal
-        # 9 is now the one with all letters in 3 + 1 more
-        for signal in inputsAndOutputs:
-            if len(signal) == 6: # only 9 or 6
-                numInCommonWith3 = 0
-                numInCommonWith1 = 0
-                for letter in signal:
-                    if self.numberToLettersMap.get(3) and letter in self.numberToLettersMap.get(3):
-                        numInCommonWith3 += 1
-                    if self.numberToLettersMap.get(1) and letter in self.numberToLettersMap.get(1):
-                        numInCommonWith1 += 1
-                if numInCommonWith3 == 5 and numInCommonWith1 == 2:
-                    self.numberToLettersMap[9] = signal
-                elif numInCommonWith3 == 5 and numInCommonWith1 == 1:
-                    self.numberToLettersMap[6] = signal
+                    
+            elif (len(signals) == 7):
+                if (not self.numberToLettersMap.get(7)):
+                    foundItems += 1
+                    self.numberToLettersMap[8] = signals
+                    
+            elif (foundItems == 4):
+                break;
+
+        # Can now decode a segment
+        for letter in self.numberToLettersMap[7]:
+            if letter not in self.numberToLettersMap[1]:
+                self.letterToLetterMap["a"] = letter
+                break
+
+        if (self.numberToLettersMap.get(8) == None):
+            self.numberToLettersMap[8] = 'abcdefg'
+
+        # Can now decode bd pair
+        bdSegment = []
+        # Segments present in 4 and 8 but not 7 = bd
+        for letter in self.numberToLettersMap[4]:
+            if letter in self.numberToLettersMap.get(8) and letter not in self.numberToLettersMap.get(7):
+                # b segment not in 2 but d segment is
+                bdSegment.append(letter)
+
+        # Can now decode eg pair
+        egSegment = []
+        for letter in self.numberToLettersMap[8]:
+            if (letter not in (self.numberToLettersMap[1] + self.numberToLettersMap[7] + self.numberToLettersMap[4])):
+                egSegment.append(letter)
+
+        foundItems = 0
+        for signals in inputsAndOutputs:
+            if (len(signals) == 5):
+                if (egSegment[0] in signals and egSegment[1] in signals):
+                    if (not self.numberToLettersMap.get(2)):
+                        self.numberToLettersMap[2] = signals
+                        foundItems += 1
+                elif (bdSegment[0] in signals and bdSegment[1] in signals):
+                    if (not self.numberToLettersMap.get(5)):
+                        self.numberToLettersMap[5] = signals
+                        foundItems += 1
                 else:
-                    self.numberToLettersMap[0] = signal
-        # 5 has 3 in common with 4, 2 has 2 in common with 4
-        for signal in inputsAndOutputs:
-            if len(signal) == 5:
-                numInCommonWith4 = 0
-                numInCommonWith2 = 0
-                for letter in signal:
-                    if self.numberToLettersMap.get(4) and letter in self.numberToLettersMap.get(4):
-                        numInCommonWith4 += 1
-                    if self.numberToLettersMap.get(2) and letter in self.numberToLettersMap.get(2):
-                        numInCommonWith2 += 1
-                if numInCommonWith4 == 3:
-                    self.numberToLettersMap[5] = signal
-                elif numInCommonWith2 == 2:
-                    self.numberToLettersMap[2] = signal
-        for key, value in self.numberToLettersMap.items():
-            self.lettersToNumbersMap[value] = key
+                    if (not self.numberToLettersMap.get(3)):
+                        self.numberToLettersMap[3] = signals
+                        foundItems += 1
+                if (foundItems == 3):
+                    break
+        
+        for letter in egSegment:
+            if letter in self.numberToLettersMap[5]:
+                self.letterToLetterMap["g"] = letter
+            else:
+                self.letterToLetterMap["e"] = letter
+
+        self.numberToLettersMap[9] = bdSegment[0] + bdSegment[1] + self.numberToLettersMap[7] + self.letterToLetterMap["g"]
+        self.numberToLettersMap[6] = self.numberToLettersMap[5] + self.letterToLetterMap["e"]
+
+        # isolate 0 - 6 segment signal that is not self.numberToLettersMAp[9] pr self.numberToLettersMap[6]
+
+        # or could isolate b and d by taking bdsegment and isolating based on letters for 3
+        for letter in bdSegment:
+            if letter in self.numberToLettersMap[3]:
+                self.letterToLetterMap["d"] = letter
+            else:
+                self.letterToLetterMap["b"] = letter
+        
+        zero = self.numberToLettersMap[8]
+        for letter in zero:
+            if (letter == self.letterToLetterMap["d"]):
+                #remove letter from zero
+                zero = zero.replace(letter, '')
+                self.numberToLettersMap[0] = zero
+                break
 
     def getSumOfOutputs(self, outputs):
-        sum = 0
+        outputValue = ""
         for output in outputs:
-            if (self.lettersToNumbersMap.get(output)):
-                sum += self.lettersToNumbersMap.get(output)
-            else:
-                print("Error: missing key: " + output)
-                print(self.lettersToNumbersMap.get(output))
-        return sum
+            match(len(output)):
+                case 2:
+                    outputValue += '1'
+                case 3:
+                    outputValue += '7'
+                case 4:
+                    outputValue += '4'
+                case 5:
+                    # 2, 3, 5
+                    if self.strContentEq(self.numberToLettersMap[2], output):
+                        outputValue += '2'
+                    elif self.strContentEq(self.numberToLettersMap[3], output):
+                        outputValue += '3'
+                    elif self.strContentEq(self.numberToLettersMap[5], output):
+                        outputValue += '5'
+                case 6:
+                    # 0, 6, 9
+                    if self.strContentEq(self.numberToLettersMap[0], output):
+                        outputValue += '0'
+                    elif self.strContentEq(self.numberToLettersMap[6], output):
+                        outputValue += '6'
+                    elif self.strContentEq(self.numberToLettersMap[9], output):
+                        outputValue += '9'
+                case 7:
+                    outputValue += '8'
+        return int(outputValue)
+
+    def strContentEq(self, str1, str2):
+        if len(str1) != len(str2):
+            return False
+        else:
+            for letter in str1:
+                if letter not in str2:
+                    return False
+        return True
+
         
 # aaaa
 #b    c
@@ -79,14 +145,15 @@ class Segments:
 #e    f
 # gggg
 
-# 1 - 2 segments (letters) #done
-# 4 - 4 segments (letters) #done
-# 7 - 3 segments (letters) #done
-# 8 - 7 segments (letters) #done
+# 1 - 2 segments (letters)
+# 4 - 4 segments (letters)
+# 7 - 3 segments (letters)
+# 8 - 7 segments (letters)
 
-# 0 - 6 segments (letters) #done
+# 0 - 6 segments (letters) 
+# 6 - 6 segments (letters)
+# 9 - 6 segments (letters)
+
 # 2 - 5 segments (letters)
-# 3 - 5 segments (letters) #done
+# 3 - 5 segments (letters)
 # 5 - 5 segments (letters)
-# 6 - 6 segments (letters) #done
-# 9 - 6 segments (letters) #done

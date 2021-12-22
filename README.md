@@ -12,7 +12,7 @@
 
 7: C++
 
-8: Ruby
+8: Python 3.9
 
 9: Bash
 
