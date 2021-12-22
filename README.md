@@ -1,3 +1,5 @@
+This repo contains my solutions for this years' programming challenges: from https://adventofcode.com/2021
+
 1: JavaScript
 
 2: Common Lisp (SBCL)
@@ -12,13 +14,13 @@
 
 7: C++
 
-8: Python 3.9
+8: Python 3.10
 
-9: Bash
+9: Lua
 
 10: Perl
 
-11: Lua
+11: Bash
 
 12: Scheme
 
